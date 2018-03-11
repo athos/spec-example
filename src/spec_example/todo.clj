@@ -32,11 +32,11 @@
   :ret ::task-list)
 
 (defn update-status [tasks id status]
-  (update-in tasks [:items id :status] status))
+  (assoc-in tasks [:items id :status] status))
 
 (s/fdef update-due-date
   :args (s/cat :tasks ::task-list :id ::id :due-date ::due-date)
   :ret ::task-list)
 
 (defn update-due-date [tasks id due-date]
-  (update-in tasks [:items id :due-date] due-date))
+  (assoc-in tasks [:items id :due-date] due-date))
