@@ -27,6 +27,27 @@
         task (assoc task :id id :status :pending)]
     (assoc-in tasks [:items id] task)))
 
+(s/fdef count-tasks
+  :args (s/cat :tasks ::task-list)
+  :ret int?)
+
+(defn count-tasks [tasks]
+  (count (:items tasks)))
+
+(s/fdef fetch-tasks
+  :args (s/cat :tasks ::task-list)
+  :ret (s/coll-of ::task))
+
+(defn fetch-tasks [tasks]
+  (sequence (vals (:items tasks))))
+
+(s/fdef fetch-task
+  :args (s/cat :tasks ::task-list :id ::id)
+  :ret (s/nilable ::task))
+
+(defn fetch-task [tasks id]
+  (get-in tasks [:items id]))
+
 (s/fdef update-status
   :args (s/cat :tasks ::task-list :id ::id :status ::status)
   :ret ::task-list)
