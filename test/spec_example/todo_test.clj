@@ -12,14 +12,30 @@
       (gen/fmap #(reduce todo/add-task todo/empty-task-list %)
                 (s/gen (s/coll-of ::todo/description))))))
 
-(defspec new-task-is-added-as-pending
+(defspec prop-add-task-to-empty
+  (prop/for-all [description (s/gen ::todo/description)]
+    (let [tasks (todo/add-task todo/empty-task-list description)
+          task (todo/fetch-task tasks 0)]
+      (and (= (:description task) description)
+           (= (:status task) :pending)))))
+
+(defspec prop-add-task
   (prop/for-all [tasks (s/gen ::task-list)
                  description (s/gen ::todo/description)]
     (let [tasks' (todo/add-task tasks description)
           task (todo/fetch-task tasks' (todo/count-tasks tasks))]
-      (= (:status task) :pending))))
+      (and (= (:description task) description)
+           (= (:status task) :pending)))))
 
-(defspec update-status-is-idempotent
+(defspec prop-update-status
+  (prop/for-all [tasks (s/gen ::task-list)]
+    (prop/for-all [id (gen/fmap :id (gen/elements tasks))
+                   status (s/gen ::todo/status)]
+      (let [tasks' (todo/update-status tasks id status)
+            task (todo/fetch-task tasks' id)]
+        (= (:status task) status)))))
+
+(defspec prop-idempotent-update-status
   (prop/for-all [tasks (s/gen ::task-list)]
     (prop/for-all [id (gen/fmap :id (gen/elements tasks))]
       (let [tasks' (todo/update-status tasks id :done)]
