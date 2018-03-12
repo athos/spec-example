@@ -10,12 +10,12 @@
     ::todo/task-list
     (fn []
       (gen/fmap #(reduce todo/add-task todo/empty-task-list %)
-                (s/gen (s/coll-of ::todo/task-contents))))))
+                (s/gen (s/coll-of ::todo/description))))))
 
 (defspec new-task-is-added-as-pending
   (prop/for-all [tasks (s/gen ::task-list)
-                 contents (s/gen ::todo/task-contents)]
-    (let [tasks' (todo/add-task tasks contents)
+                 description (s/gen ::todo/description)]
+    (let [tasks' (todo/add-task tasks description)
           task (todo/fetch-task tasks' (todo/count-tasks tasks))]
       (= (:status task) :pending))))
 

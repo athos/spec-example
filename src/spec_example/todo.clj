@@ -1,30 +1,26 @@
 (ns spec-example.todo
   (:require [clojure.spec.alpha :as s]))
 
-(s/def ::description string?)
-(s/def ::due-date inst?)
-(s/def ::task-contents
-  (s/keys :req-un [::description]
-          :opt-un [::due-date]))
 (s/def ::id nat-int?)
+(s/def ::description string?)
 (s/def ::status #{:pending :done})
-(s/def ::task
-  (s/merge (s/keys :req-un [::id ::status])
-           ::task-contents))
+(s/def ::task (s/keys :req-un [::id ::description ::status]))
 
 (s/def ::items (s/map-of ::id ::task))
 (s/def ::task-list (s/keys :req-un [::items]))
 
 (def empty-task-list
-  {:items (sorted-map)})
+  {:items {}})
 
 (s/fdef add-task
-  :args (s/cat :tasks ::task-list :task ::task-contents)
+  :args (s/cat :tasks ::task-list :description ::description)
   :ret ::task-list)
 
-(defn add-task [tasks task]
+(defn add-task [tasks description]
   (let [id (count (:items tasks))
-        task (assoc task :id id :status :pending)]
+        task {:id id
+              :description description
+              :status :pending}]
     (assoc-in tasks [:items id] task)))
 
 (s/fdef count-tasks
@@ -33,13 +29,6 @@
 
 (defn count-tasks [tasks]
   (count (:items tasks)))
-
-(s/fdef fetch-tasks
-  :args (s/cat :tasks ::task-list)
-  :ret (s/coll-of ::task))
-
-(defn fetch-tasks [tasks]
-  (sequence (vals (:items tasks))))
 
 (s/fdef fetch-task
   :args (s/cat :tasks ::task-list :id ::id)
@@ -54,10 +43,3 @@
 
 (defn update-status [tasks id status]
   (assoc-in tasks [:items id :status] status))
-
-(s/fdef update-due-date
-  :args (s/cat :tasks ::task-list :id ::id :due-date ::due-date)
-  :ret ::task-list)
-
-(defn update-due-date [tasks id due-date]
-  (assoc-in tasks [:items id :due-date] due-date))
