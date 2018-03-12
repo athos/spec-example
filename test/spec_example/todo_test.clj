@@ -1,10 +1,17 @@
 (ns spec-example.todo-test
   (:require [clojure.spec.alpha :as s]
+            [clojure.spec.test.alpha :as stest]
             [clojure.test :as t :refer [is]]
             [clojure.test.check.clojure-test :refer [defspec]]
             [clojure.test.check.generators :as gen]
             [com.gfredericks.test.chuck.clojure-test :refer [for-all]]
             [spec-example.todo :as todo]))
+
+(t/use-fixtures :once
+  (fn [f]
+    (stest/instrument (stest/enumerate-namespace 'spec-example.todo))
+    (f)
+    (stest/unstrument)))
 
 (s/def ::task-list
   (s/with-gen
