@@ -30,6 +30,13 @@
 (defn count-tasks [tasks]
   (count (:items tasks)))
 
+(s/fdef all-tasks
+  :args (s/cat :tasks ::task-list)
+  :ret (s/coll-of ::task))
+
+(defn all-tasks [tasks]
+  (sequence (vals (:items tasks))))
+
 (s/fdef fetch-task
   :args (s/cat :tasks ::task-list :id ::id)
   :ret (s/nilable ::task))
