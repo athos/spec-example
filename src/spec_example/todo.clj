@@ -23,16 +23,16 @@
               :status :pending}]
     (assoc-in tasks [:items id] task)))
 
-(s/fdef count-tasks
-  :args (s/cat :tasks ::task-list)
-  :ret int?)
+#_(s/fdef count-tasks
+  :args (s/cat :tasks ???)
+  :ret ???)
 
 (defn count-tasks [tasks]
   (count (:items tasks)))
 
-(s/fdef all-tasks
-  :args (s/cat :tasks ::task-list)
-  :ret (s/coll-of ::task))
+#_(s/fdef all-tasks
+  :args (s/cat :tasks ???)
+  :ret ???)
 
 (defn all-tasks [tasks]
   (sequence (vals (:items tasks))))
