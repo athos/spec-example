@@ -1,5 +1,4 @@
-(ns user
-  (:require [clojure.spec.alpha :as s]))
+(ns user)
 
 (defn goto [ns-name]
   (require ns-name)
